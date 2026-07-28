@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 $username = trim($_POST['username'] ?? '');
 $password = trim($_POST['password'] ?? '');
-$role = trim($_POST['role'] ?? '');
+$role     = trim($_POST['role'] ?? '');
 
 // ----------------------
 // Validation
@@ -28,52 +28,84 @@ if (empty($username) || empty($password) || empty($role)) {
     exit;
 }
 
-// ----------------------
-// Admin / Teacher Login
-// ----------------------
+// ====================================================
+// ADMIN LOGIN
+// ====================================================
 
-if ($role === "Admin" || $role === "Teacher") {
+if ($role === "Admin") {
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND role = ?");
-
-    $stmt->execute([$username, $role]);
-
-    $user = $stmt->fetch();
-
-    if ($user && password_verify($password, $user['password'])) {
-
-        session_regenerate_id(true);
-
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
-
-        if ($role === "Admin") {
-
-            header("Location: admin/dashboard.php");
-
-        } else {
-
-            header("Location: teacher/dashboard.php");
-
-        }
-
-        exit;
-    }
-
-}
-
-// ----------------------
-// Student Login
-// ----------------------
-
-if ($role === "Student") {
-
-    $stmt = $pdo->prepare("SELECT * FROM students WHERE roll_no = ?");
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM users
+        WHERE username = ?
+        AND role = 'Admin'
+        LIMIT 1
+    ");
 
     $stmt->execute([$username]);
 
-    $student = $stmt->fetch();
+    $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($admin && password_verify($password, $admin['password'])) {
+
+        session_regenerate_id(true);
+
+        $_SESSION['user_id'] = $admin['id'];
+        $_SESSION['username'] = $admin['username'];
+        $_SESSION['role'] = "Admin";
+
+        header("Location: admin/dashboard.php");
+        exit;
+    }
+}
+
+// ====================================================
+// TEACHER LOGIN
+// ====================================================
+
+if ($role === "Teacher") {
+
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM teachers
+        WHERE username = ?
+        LIMIT 1
+    ");
+
+    $stmt->execute([$username]);
+
+    $teacher = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($teacher && password_verify($password, $teacher['password'])) {
+
+        session_regenerate_id(true);
+
+        $_SESSION['teacher_id'] = $teacher['id'];
+        $_SESSION['username'] = $teacher['username'];
+        $_SESSION['teacher_name'] = $teacher['full_name'];
+        $_SESSION['role'] = "Teacher";
+
+        header("Location: teacher/dashboard.php");
+        exit;
+    }
+}
+
+// ====================================================
+// STUDENT LOGIN
+// ====================================================
+
+if ($role === "Student") {
+
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM students
+        WHERE roll_no = ?
+        LIMIT 1
+    ");
+
+    $stmt->execute([$username]);
+
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($student && password_verify($password, $student['password'])) {
 
@@ -84,18 +116,15 @@ if ($role === "Student") {
         $_SESSION['role'] = "Student";
 
         header("Location: student/dashboard.php");
-
         exit;
     }
-
 }
 
-// ----------------------
-// Invalid Login
-// ----------------------
+// ====================================================
+// INVALID LOGIN
+// ====================================================
 
 $_SESSION['error'] = "Invalid username or password.";
 
 header("Location: login.php");
-
 exit;

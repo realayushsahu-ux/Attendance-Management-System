@@ -97,4 +97,20 @@ CREATE TABLE attendance (
     UNIQUE(session_id, student_id)
 );
 
+CREATE TABLE teachers (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    full_name VARCHAR(100) NOT NULL,
+
+    email VARCHAR(150) NOT NULL UNIQUE,
+
+    phone VARCHAR(10) NOT NULL UNIQUE,
+
+    username VARCHAR(50) NOT NULL UNIQUE,
+
+    password VARCHAR(255) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 COMMIT;

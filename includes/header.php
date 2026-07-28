@@ -1,8 +1,4 @@
 <?php
-// ==========================================
-// Header
-// Attendance Management System
-// ==========================================
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,9 +9,19 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Attendance Management System</title>
+    <meta
+        name="description"
+        content="Attendance Management System"
+    >
 
-    <link rel="stylesheet" href="/Attendance-Management-System/css/style.css">
+    <title>
+        Attendance Management System
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/Attendance-Management-System/css/style.css"
+    >
 
 </head>
 
