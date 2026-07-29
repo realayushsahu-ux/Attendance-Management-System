@@ -48,6 +48,8 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <div class="attendance-card">
 
+<a href="dashboard.php" class="btn">← Back to Dashboard</a><br><br>
+
 <h2>Attendance History</h2>
 
 <table class="attendance-table">
